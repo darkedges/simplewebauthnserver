@@ -162,7 +162,6 @@ app.get('/generate-registration-options', (req, res) => {
    * after you verify an authenticator response.
    */
   req.session.currentChallenge = options.challenge;
-  console.log(options.challenge)
 
   res.send(options);
 });
@@ -173,7 +172,6 @@ app.post('/verify-registration', async (req, res) => {
   const user = inMemoryUserDeviceDB[loggedInUserId];
 
   const expectedChallenge = req.session.currentChallenge;
-  console.log(expectedChallenge)
 
   let verification: VerifiedRegistrationResponse;
   try {

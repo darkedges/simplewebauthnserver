@@ -44,6 +44,7 @@ const {
 
 app.use(express.static('./public/'));
 app.use(express.json());
+app.set('trust proxy', 1)
 app.use(
   session({
     secret: 'secret123',
@@ -51,7 +52,10 @@ app.use(
     resave: false,
     cookie: {
       maxAge: 86400000,
-      httpOnly: true, // Ensure to not expose session cookies to clientside scripts
+      httpOnly: false, // Ensure to not expose session cookies to clientside scripts
+      secure: true,
+      sameSite: 'none',
+      domain: '.connectid.darkedges.com'
     },
     store: new MemoryStore({
       checkPeriod: 86_400_000, // prune expired entries every 24h
@@ -158,6 +162,7 @@ app.get('/generate-registration-options', (req, res) => {
    * after you verify an authenticator response.
    */
   req.session.currentChallenge = options.challenge;
+  console.log(options.challenge)
 
   res.send(options);
 });
@@ -168,6 +173,7 @@ app.post('/verify-registration', async (req, res) => {
   const user = inMemoryUserDeviceDB[loggedInUserId];
 
   const expectedChallenge = req.session.currentChallenge;
+  console.log(expectedChallenge)
 
   let verification: VerifiedRegistrationResponse;
   try {
